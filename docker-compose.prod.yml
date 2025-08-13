@@ -1,0 +1,73 @@
+version: "3.8"
+
+# Production override for GastroGenius AI
+services:
+  app:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      # Production database settings
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      # Security settings
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: 86400000
+      # Google AI settings
+      GOOGLE_AI_API_KEY: ${GOOGLE_AI_API_KEY}
+      GOOGLE_AI_PROJECT_ID: ${GOOGLE_AI_PROJECT_ID}
+      GOOGLE_AI_LOCATION: ${GOOGLE_AI_LOCATION:-us-central1}
+      GOOGLE_AI_MODEL: ${GOOGLE_AI_MODEL:-gemini-1.5-pro}
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+          cpus: "1.0"
+        reservations:
+          memory: 512MB
+          cpus: "0.5"
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres:
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 512MB
+          cpus: "0.5"
+        reservations:
+          memory: 256MB
+          cpus: "0.25"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    deploy:
+      resources:
+        limits:
+          memory: 256MB
+          cpus: "0.25"
+        reservations:
+          memory: 128MB
+          cpus: "0.1"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  nginx:
+    profiles:
+      - prod

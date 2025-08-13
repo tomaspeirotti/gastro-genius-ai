@@ -1,0 +1,92 @@
+server:
+  port: ${SERVER_PORT:8090}
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: gastro-genius-ai
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:gastro_genius_db}
+    username: ${POSTGRES_USER:gastro_genius}
+    password: ${POSTGRES_PASSWORD:gastro_genius_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      leak-detection-threshold: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: ${GOOGLE_AI_PROJECT_ID:}
+          location: ${GOOGLE_AI_LOCATION:us-central1}
+          chat:
+            options:
+              model: ${GOOGLE_AI_MODEL:gemini-1.5-pro}
+              temperature: 0.7
+              max-tokens: 2048
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-change-in-production}
+  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
+
+# API Documentation
+springdoc:
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Logging Configuration
+logging:
+  level:
+    com.gastrogeniusai: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
