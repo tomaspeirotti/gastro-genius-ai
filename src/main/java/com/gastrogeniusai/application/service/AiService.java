@@ -103,7 +103,7 @@ public class AiService {
         Prompt prompt = promptTemplate.create(promptVariables);
         ChatResponse response = chatModel.call(prompt);
 
-        return response.getResult().getOutput().getText();
+        return response.getResult().getOutput().getContent();
     }
 
     /**
@@ -182,7 +182,7 @@ public class AiService {
         Prompt prompt = promptTemplate.create(promptVariables);
         ChatResponse response = chatModel.call(prompt);
 
-        return response.getResult().getOutput().getText();
+        return response.getResult().getOutput().getContent();
     }
 
     /**
@@ -278,7 +278,7 @@ public class AiService {
         Prompt prompt = promptTemplate.create(promptVariables);
         ChatResponse response = chatModel.call(prompt);
 
-        return response.getResult().getOutput().getText();
+        return response.getResult().getOutput().getContent();
     }
 
     /**
